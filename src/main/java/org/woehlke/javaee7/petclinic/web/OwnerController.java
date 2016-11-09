@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created with IntelliJ IDEA.
@@ -142,9 +143,11 @@ public class OwnerController implements Serializable {
         }
         else{
             this.visitList = visitDao.getAll();
-            for(int i = 0;i < visitList.size();i++){
-                if(visitList.get(i).getDate().compareTo(this.visitDate) != 0){
-                    visitList.remove(i);
+            Iterator<Visit> i = visitList.iterator();
+            while(i.hasNext()){
+                this.visit = i.next();
+                if(visit.getDate().compareTo(this.visitDate) != 0){
+                    i.remove();
                 }
             }
         } 
