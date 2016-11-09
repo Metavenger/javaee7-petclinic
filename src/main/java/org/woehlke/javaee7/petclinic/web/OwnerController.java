@@ -150,7 +150,7 @@ public class OwnerController implements Serializable {
                     i.remove();
                 }
             }
-        } 
+        }
         return "visits.jsf";
     }
 
