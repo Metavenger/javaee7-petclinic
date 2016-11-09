@@ -16,6 +16,7 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,11 +51,15 @@ public class OwnerController implements Serializable {
     private List<Owner> ownerList;
 
     private Owner owner;
+      
+    private List<Visit> visitList;
+    
+    private Date visitDate;
 
     private Pet pet;
 
     private long petTypeId;
-
+    
     private Visit visit;
     private int scrollerPage;
 
@@ -64,6 +69,18 @@ public class OwnerController implements Serializable {
 
     public void setVisit(Visit visit) {
         this.visit = visit;
+    }
+    
+    public Date getVisitDate() {
+        return visitDate;
+    }
+
+    public void setVisitDate(Date visitDate) {
+        this.visitDate = visitDate;
+    }
+    
+    public List<Visit> getVisitList(){
+        return visitList;
     }
 
     public long getPetTypeId() {
@@ -117,6 +134,21 @@ public class OwnerController implements Serializable {
             }
         }
         return "owners.jsf";
+    }
+    
+    public String searchVisits(){
+        if(visitDate == null){
+            this.visitList = visitDao.getAll();
+        }
+        else{
+            this.visitList = visitDao.getAll();
+            for(int i = 0;i < visitList.size();i++){
+                if(visitList.get(i).getDate().compareTo(this.visitDate) != 0){
+                    visitList.remove(i);
+                }
+            }
+        } 
+        return "visits.jsf";
     }
 
     public String getNewOwnerForm(){

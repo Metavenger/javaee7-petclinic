@@ -6,6 +6,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.logging.Logger;
+import javax.persistence.TypedQuery;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,6 +29,13 @@ public class VisitDaoImpl implements VisitDao {
     public void addNew(Visit visit) {
         log.info("addNewVisit: "+visit.toString());
         entityManager.persist(visit);
+    }
+    
+    @Override
+    public List<Visit> getAll() {
+        TypedQuery<Visit> q = entityManager.createQuery("select v from Visit v order by v.date", Visit.class);
+        List<Visit> list =  q.getResultList();
+        return list;
     }
 
     @Override
