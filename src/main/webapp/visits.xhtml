@@ -9,19 +9,28 @@
         <ui:define name="content">
             <h2 id="visitsMsg">#{msg.visits}</h2>
             <h:form id="visitsForm">
-                <h:panelGrid id="grid" columns="2" style="vertical-align: middle">
+                <h:panelGrid id="grid" columns="1" style="vertical-align: middle">
                     <h:panelGroup>
-                    <rich:calendar id="visitDate" locale="#{language.localeCode}" value="#{ownerController.visitDate}"/>
+                        <h:outputLabel value="#{msg.vet} " />
+                        <h:inputText value="#{ownerController.vetName}" />
+                        <h:outputLabel value="#{msg.date} " />
+                        <rich:calendar id="visitDate" locale="#{language.localeCode}" value="#{ownerController.visitDate}"/>
                     </h:panelGroup>
                     <h:commandButton id="searchVisits" action="#{ownerController.searchVisits}" value="#{msg.findAppointments}" styleClass="btn"/>
                 </h:panelGrid>
                 
-                <rich:dataTable id="visitTable" rows="4" value="#{ownerController.visitList}" var="visit" styleClass="table table-striped table-hover">
+                <rich:dataTable id="visitTable" rows="10" value="#{ownerController.visitList}" var="visit" styleClass="table table-striped table-hover">
                     <rich:column>
                         <f:facet name="header">
                             <a4j:commandLink value="#{msg.name}" render="visitTable" />
                         </f:facet>
                         <h:outputText id="firstName" value="#{visit.pet.owner.firstName}"/>&#160;<h:outputText id="lastName" value="#{visit.pet.owner.lastName}"/>
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <a4j:commandLink value="#{msg.vet}" render="visitTable"/>
+                        </f:facet>
+                        <h:outputText id="vetName" value="Dr. #{visit.vet.lastName}"/>
                     </rich:column>
                     <rich:column>
                         <f:facet name="header">

@@ -39,6 +39,11 @@
                     <h:outputLabel value="#{msg.description}" for="visitDescription" />
                     <h:inputText id="visitDescription" styleClass="form-control"
                                  value="#{ownerController.visit.description}" />
+                    <h:outputLabel value="#{msg.vet}" for="visitVet" />
+                    <h:selectOneListbox id="visitVet" value="#{ownerController.vetId}">
+                        <f:selectItems id="vetItems" value="#{ownerController.allVets}"
+                                       var="vet" itemLabel="#{vet.firstName} #{vet.lastName}" itemValue="#{vet.id}" />
+                    </h:selectOneListbox>
                     <h:commandButton id="save" action="#{ownerController.saveVisit}" value="#{msg.save}" />
                 </h:panelGrid>
 
@@ -57,6 +62,12 @@
                             <h:outputText value="#{msg.description}"/>
                         </f:facet>
                         <h:outputText id="description" value="#{petsVisit.description}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{msg.vet}"/>
+                        </f:facet>
+                        <h:outputText id="vetName" value="Dr. #{petsVisit.vet.lastName}"/>
                     </h:column>
                 </h:dataTable>
 

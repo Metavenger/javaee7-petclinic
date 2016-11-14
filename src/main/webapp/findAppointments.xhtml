@@ -9,9 +9,12 @@
         <ui:define name="content">
             <h2 id="findAppointments">#{msg.findAppointments}</h2>
             <h:form id="findAppointmentsForm">
-                <h:panelGrid id="grid" columns="2" style="vertical-align: middle">
+                <h:panelGrid id="grid" columns="1" style="vertical-align: middle">
                     <h:panelGroup>
-                    <rich:calendar id="visitDate" locale="#{language.localeCode}" value="#{ownerController.visitDate}"/>
+                        <h:outputLabel value="#{msg.vet} " />
+                        <h:inputText value="#{ownerController.vetName}" />
+                        <h:outputLabel value="#{msg.date} " />
+                        <rich:calendar id="visitDate" locale="#{language.localeCode}" value="#{ownerController.visitDate}"/>
                     </h:panelGroup>
                     <h:commandButton id="searchVisits" action="#{ownerController.searchVisits}" value="#{msg.findAppointments}" styleClass="btn"/>
                 </h:panelGrid>

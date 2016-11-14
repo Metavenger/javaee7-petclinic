@@ -4,10 +4,12 @@ import org.woehlke.javaee7.petclinic.dao.OwnerDao;
 import org.woehlke.javaee7.petclinic.dao.PetDao;
 import org.woehlke.javaee7.petclinic.dao.PetTypeDao;
 import org.woehlke.javaee7.petclinic.dao.VisitDao;
+import org.woehlke.javaee7.petclinic.dao.VetDao;
 import org.woehlke.javaee7.petclinic.entities.Owner;
 import org.woehlke.javaee7.petclinic.entities.Pet;
 import org.woehlke.javaee7.petclinic.entities.PetType;
 import org.woehlke.javaee7.petclinic.entities.Visit;
+import org.woehlke.javaee7.petclinic.entities.Vet;
 import org.woehlke.javaee7.petclinic.services.OwnerService;
 
 import javax.ejb.EJB;
@@ -43,6 +45,9 @@ public class OwnerController implements Serializable {
 
     @EJB
     private VisitDao visitDao;
+    
+    @EJB
+    private VetDao vetDao;
 
     @EJB
     private OwnerService ownerService;
@@ -62,6 +67,14 @@ public class OwnerController implements Serializable {
     private long petTypeId;
     
     private Visit visit;
+    
+    private long vetId;
+    
+    private String vetName;
+    
+    private Vet vet;
+    private List<Vet> vetList;
+    
     private int scrollerPage;
 
     public Visit getVisit() {
@@ -80,8 +93,20 @@ public class OwnerController implements Serializable {
         this.visitDate = visitDate;
     }
     
+    public String getVetName(){
+        return vetName;
+    }
+    
+    public void setVetName(String vetName){
+        this.vetName = vetName;
+    }
+    
     public List<Visit> getVisitList(){
         return visitList;
+    }
+    
+    public List<Vet> getVetList(){
+        return vetList;
     }
 
     public long getPetTypeId() {
@@ -90,6 +115,14 @@ public class OwnerController implements Serializable {
 
     public void setPetTypeId(long petTypeId) {
         this.petTypeId = petTypeId;
+    }
+    
+    public long getVetId(){
+        return vetId;
+    }
+    
+    public void setVetId(long vetId){
+        this.vetId = vetId;
     }
 
     public Pet getPet() {
@@ -138,7 +171,7 @@ public class OwnerController implements Serializable {
     }
     
     public String searchVisits(){
-        if(visitDate == null){
+        if(visitDate == null && vetName.isEmpty()){
             this.visitList = visitDao.getAll();
         }
         else{
@@ -146,9 +179,30 @@ public class OwnerController implements Serializable {
             Iterator<Visit> i = visitList.iterator();
             while(i.hasNext()){
                 this.visit = i.next();
-                if(visit.getDate().compareTo(this.visitDate) != 0){
-                    i.remove();
+                if(visitDate != null){
+                    if(visit.getDate().compareTo(this.visitDate) != 0){
+                        i.remove();
+                    }
                 }
+                else if(!vetName.isEmpty()){
+                    try{
+                        vetList = vetDao.search(vetName);
+                    }
+                    catch(Exception e){
+                        vetList = null;
+                    }
+                    if(vetList != null)
+                    {
+                        Iterator<Vet> j = vetList.iterator();
+                        while(j.hasNext()){
+                            this.vet = j.next();
+                            if(!visit.getVet().getId().equals(vet.getId())){
+                                i.remove();
+                            }
+                        }
+                    }
+                }
+                
             }
         }
         return "visits.jsf";
@@ -194,6 +248,10 @@ public class OwnerController implements Serializable {
     public List<PetType> getAllPetTypes(){
         return petTypeDao.getAll();
     }
+    
+    public List<Vet> getAllVets(){
+        return vetDao.getAll();
+    }
 
     public String addNewPet(){
         PetType petType = petTypeDao.findById(this.petTypeId);
@@ -228,6 +286,8 @@ public class OwnerController implements Serializable {
 
     public String saveVisit(){
         this.visit.setPet(this.pet);
+        this.vet = vetDao.findById(this.vetId);
+        this.visit.setVet(this.vet);
         this.pet.addVisit(this.visit);
         ownerService.addNewVisit(this.visit);
         log.info("owner1: " + this.owner.toString());

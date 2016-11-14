@@ -33,6 +33,10 @@ public class Visit implements Comparable<Visit> {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pet_id")
     private Pet pet;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "vet_id")
+    private Vet vet;
 
     public Long getId() {
         return id;
@@ -64,6 +68,14 @@ public class Visit implements Comparable<Visit> {
 
     public void setPet(Pet pet) {
         this.pet = pet;
+    }
+    
+    public Vet getVet() {
+        return vet;
+    }
+    
+    public void setVet(Vet vet){
+        this.vet = vet;
     }
 
     @Override
