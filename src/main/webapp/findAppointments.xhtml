@@ -12,11 +12,11 @@
                 <h:panelGrid id="grid" columns="1" style="vertical-align: middle">
                     <h:panelGroup>
                         <h:outputLabel value="#{msg.vet} " />
-                        <h:inputText value="#{ownerController.vetName}" />
+                        <h:inputText value="#{visitController.vetName}" />
                         <h:outputLabel value="#{msg.date} " />
-                        <rich:calendar id="visitDate" locale="#{language.localeCode}" value="#{ownerController.visitDate}"/>
+                        <rich:calendar id="visitDate" locale="#{language.localeCode}" value="#{visitController.visitDate}"/>
                     </h:panelGroup>
-                    <h:commandButton id="searchVisits" action="#{ownerController.searchVisits}" value="#{msg.findAppointments}" styleClass="btn"/>
+                    <h:commandButton id="searchVisits" action="#{visitController.searchVisits}" value="#{msg.findAppointments}" styleClass="btn"/>
                 </h:panelGrid>
             </h:form>
             

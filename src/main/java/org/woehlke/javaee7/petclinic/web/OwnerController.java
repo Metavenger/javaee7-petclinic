@@ -3,7 +3,6 @@ package org.woehlke.javaee7.petclinic.web;
 import org.woehlke.javaee7.petclinic.dao.OwnerDao;
 import org.woehlke.javaee7.petclinic.dao.PetDao;
 import org.woehlke.javaee7.petclinic.dao.PetTypeDao;
-import org.woehlke.javaee7.petclinic.dao.VisitDao;
 import org.woehlke.javaee7.petclinic.dao.VetDao;
 import org.woehlke.javaee7.petclinic.entities.Owner;
 import org.woehlke.javaee7.petclinic.entities.Pet;
@@ -19,7 +18,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.Date;
-import java.util.Iterator;
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,9 +41,6 @@ public class OwnerController implements Serializable {
     @EJB
     private PetTypeDao petTypeDao;
 
-    @EJB
-    private VisitDao visitDao;
-    
     @EJB
     private VetDao vetDao;
 
@@ -170,44 +165,6 @@ public class OwnerController implements Serializable {
         return "owners.jsf";
     }
     
-    public String searchVisits(){
-        if(visitDate == null && vetName.isEmpty()){
-            this.visitList = visitDao.getAll();
-        }
-        else{
-            this.visitList = visitDao.getAll();
-            Iterator<Visit> i = visitList.iterator();
-            while(i.hasNext()){
-                this.visit = i.next();
-                if(visitDate != null){
-                    if(visit.getDate().compareTo(this.visitDate) != 0){
-                        i.remove();
-                    }
-                }
-                else if(!vetName.isEmpty()){
-                    try{
-                        vetList = vetDao.search(vetName);
-                    }
-                    catch(Exception e){
-                        vetList = null;
-                    }
-                    if(vetList != null)
-                    {
-                        Iterator<Vet> j = vetList.iterator();
-                        while(j.hasNext()){
-                            this.vet = j.next();
-                            if(!visit.getVet().getId().equals(vet.getId())){
-                                i.remove();
-                            }
-                        }
-                    }
-                }
-                
-            }
-        }
-        return "visits.jsf";
-    }
-
     public String getNewOwnerForm(){
         this.owner = new Owner();
         return "newOwner.jsf";
