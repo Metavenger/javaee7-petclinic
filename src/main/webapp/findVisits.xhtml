@@ -1,0 +1,29 @@
+    <ui:composition template="./template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich">
+
+        <ui:define name="content">
+            <h2 id="findVisits">#{msg.visits}</h2>
+            <h:form id="findVisitsForm">
+                <h:panelGrid id="grid" columns="1" style="vertical-align: middle">
+                    <h:panelGroup>
+                        <h:outputLabel value="#{msg.vet} " /><br/>
+                        <h:selectOneMenu id="vetId" value="#{visitController.vetId}">
+                            <f:selectItems value="#{visitController.allVets}" 
+                                           var="vet" itemLabel="#{vet.firstName} #{vet.lastName}" itemValue="#{vet.id}" />
+                        </h:selectOneMenu><br/>
+                        <h:outputLabel value="#{msg.date} " /><br/>
+                        <rich:calendar id="visitDateBegin" locale="#{language.localeCode}" value="#{visitController.visitDateBegin}"/><br/>
+                        <rich:calendar id="visitDateEnd" locale="#{language.localeCode}" value="#{visitController.visitDateEnd}"/><br/>
+                        <h:commandButton id="searchVisits" action="#{visitController.searchVisits}" value="#{msg.findVisits}" styleClass="btn"/>
+                    </h:panelGroup>
+                </h:panelGrid>
+            </h:form>
+            
+        </ui:define>
+        
+    </ui:composition>

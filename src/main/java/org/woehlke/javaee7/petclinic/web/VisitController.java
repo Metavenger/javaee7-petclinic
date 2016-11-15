@@ -5,6 +5,16 @@
  */
 package org.woehlke.javaee7.petclinic.web;
 
+/*
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import java.awt.Desktop;
+import java.io.File;
+*/
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Iterator;
@@ -12,6 +22,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import java.text.SimpleDateFormat;
 import org.woehlke.javaee7.petclinic.dao.VetDao;
 import org.woehlke.javaee7.petclinic.dao.VisitDao;
 import org.woehlke.javaee7.petclinic.entities.Owner;
@@ -32,14 +43,15 @@ public class VisitController implements Serializable{
     
     @EJB
     private VetDao vetDao;
-
+    
     private List<Owner> ownerList;
 
     private Owner owner;
       
     private List<Visit> visitList;
     
-    private Date visitDate;
+    private Date visitDateBegin;
+    private Date visitDateEnd;
 
     private Pet pet;
 
@@ -48,36 +60,57 @@ public class VisitController implements Serializable{
     private Visit visit;
     
     private long vetId;
-    
-    private String vetName;
-    
+      
     private Vet vet;
+    
     private List<Vet> vetList;
     
     private int scrollerPage;
     
+    private String stringDate;
+    
+    public String getStringDate(){
+        return stringDate;
+    }
+    
+    public void setStringDate(String stringDate){
+        this.stringDate = stringDate;
+    }
+    
     public Visit getVisit() {
         return visit;
     }
-
+    
+    public Vet getVet(){
+        return vet;
+    }
+    
+    public void setVet(Vet vet){
+        this.vet = vet;
+    }
+    
     public void setVisit(Visit visit) {
         this.visit = visit;
     }
     
-    public Date getVisitDate() {
-        return visitDate;
+    public Date getVisitDateEnd() {
+        return visitDateEnd;
     }
 
-    public void setVisitDate(Date visitDate) {
-        this.visitDate = visitDate;
+    public void setVisitDateEnd(Date visitDateEnd) {
+        this.visitDateEnd = visitDateEnd;
+    }
+    
+     public Date getVisitDateBegin() {
+        return visitDateBegin;
+    }
+
+    public void setVisitDateBegin(Date visitDateBegin) {
+        this.visitDateBegin = visitDateBegin;
     }
     
     public String getVetName(){
-        return vetName;
-    }
-    
-    public void setVetName(String vetName){
-        this.vetName = vetName;
+        return vet.getFirstName() + vet.getLastName();
     }
     
     public List<Visit> getVisitList(){
@@ -128,41 +161,45 @@ public class VisitController implements Serializable{
         this.ownerList = ownerList;
     }
     
+    public List<Vet> getAllVets(){
+        return vetDao.getAll();
+    }
+    
     public String searchVisits(){
-        if(visitDate == null && vetName.isEmpty()){
-            this.visitList = visitDao.getAll();
+        this.visitList = visitDao.getAll();
+        this.vet = vetDao.findById(this.vetId);
+        if(this.visitDateBegin instanceof Date){
+            this.stringDate = new SimpleDateFormat("yyyy-MM-dd").format(visitDateBegin);
+            if(this.visitDateEnd instanceof Date){
+                stringDate += " to ";
+                stringDate +=  new SimpleDateFormat("yyyy-MM-dd").format(visitDateEnd);
+            }            
         }
-        else{
-            this.visitList = visitDao.getAll();
-            Iterator<Visit> i = visitList.iterator();
-            while(i.hasNext()){
-                this.visit = i.next();
-                if(visitDate != null){
-                    if(visit.getDate().compareTo(this.visitDate) != 0){
+        else if(this.visitDateEnd instanceof Date){
+            stringDate = new SimpleDateFormat("yyyy-MM-dd").format(visitDateEnd);
+        }
+        Iterator<Visit> i = visitList.iterator();
+        while(i.hasNext()){
+            this.visit = i.next();
+            if(visit.getVet().getId().equals(vet.getId())){
+                if(visitDateBegin instanceof Date && visitDateEnd instanceof Date && visitDateBegin.before(visitDateEnd)){
+                    if(visit.getDate().before(visitDateBegin) || visit.getDate().after(visitDateEnd)){
                         i.remove();
                     }
                 }
-                else if(!vetName.isEmpty()){
-                    try{
-                        vetList = vetDao.search(vetName);
+                else if(visitDateBegin instanceof Date || visitDateEnd instanceof Date){
+                    if(visitDateBegin instanceof Date && !visit.getDate().equals(visitDateBegin)){
+                        i.remove();
                     }
-                    catch(Exception e){
-                        vetList = null;
-                    }
-                    if(vetList != null)
-                    {
-                        Iterator<Vet> j = vetList.iterator();
-                        while(j.hasNext()){
-                            this.vet = j.next();
-                            if(!visit.getVet().getId().equals(vet.getId())){
-                                i.remove();
-                            }
-                        }
+                    else if(visitDateEnd instanceof Date && !visit.getDate().equals(visitDateEnd)){
+                        i.remove();
                     }
                 }
-                
+                else{
+                    i.remove();
+                }
             }
-        }
+        }     
         return "visits.jsf";
     }
     

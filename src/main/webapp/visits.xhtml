@@ -7,19 +7,30 @@
                 xmlns:rich="http://richfaces.org/rich">
 
         <ui:define name="content">
-            <h2 id="visitsMsg">#{msg.appointments}</h2>
+            <h2 id="visitsMsg" class="no-print">#{msg.visits}</h2>
+            <center><h3 id="visitsMsgHidden" >Visits under the care of Dr. #{visitController.vet.firstName} #{visitController.vet.lastName}</h3></center>
+            <center><h3 id="visitsMsgHidden">#{visitController.stringDate}</h3></center>
+            
             <h:form id="visitsForm">
-                <h:panelGrid id="grid" columns="1" style="vertical-align: middle">
+                
+                <h:panelGrid id="grid" class="no-print" columns="1" style="vertical-align: middle">
                     <h:panelGroup>
-                        <h:outputLabel value="#{msg.vet} " />
-                        <h:inputText value="#{visitController.vetName}" />
-                        <h:outputLabel value="#{msg.date} " />
-                        <rich:calendar id="visitDate" locale="#{language.localeCode}" value="#{visitController.visitDate}"/>
+                        <h:outputLabel value="#{msg.vet} " /><br/>
+                        <h:selectOneMenu id="vetId" value="#{visitController.vetId}">
+                            <f:selectItems value="#{visitController.allVets}" 
+                                           var="vet" itemLabel="#{vet.firstName} #{vet.lastName}" itemValue="#{vet.id}" />
+                        </h:selectOneMenu><br/>
+                        <h:outputLabel value="#{msg.date} " /><br/>
+                        <rich:calendar id="visitDateBegin" locale="#{language.localeCode}" value="#{visitController.visitDateBegin}"/><br/>
+                        <rich:calendar id="visitDateEnd" locale="#{language.localeCode}" value="#{visitController.visitDateEnd}"/><br/>
+                        <h:commandButton id="searchVisits" action="#{visitController.searchVisits}" value="#{msg.findVisits}" styleClass="btn"/>
+                        <h:commandButton id="print" onclick="window.print()" value="Click to Print this Report" styleClass="btn" 
+                                         rendered="#{not empty visitController.visitList}"/>
                     </h:panelGroup>
-                    <h:commandButton id="searchVisits" action="#{visitController.searchVisits}" value="#{msg.findAppointments}" styleClass="btn"/>
                 </h:panelGrid>
                 
-                <rich:dataTable id="visitTable" rows="10" value="#{visitController.visitList}" var="visit" styleClass="table table-striped table-hover">
+                <rich:dataTable id="visitTable" rendered="#{not empty visitController.visitList}" value="#{visitController.visitList}" 
+                                var="visit" styleClass="table table-striped table-hover">
                     <rich:column>
                         <f:facet name="header">
                             <a4j:commandLink value="#{msg.name}" render="visitTable" />
@@ -57,9 +68,6 @@
                         <h:outputText id="description" value="#{visit.description}"/>
                     </rich:column>
                 </rich:dataTable>
-                <rich:dataScroller for="visitTable"
-                                   page="#{visitController.scrollerPage}"
-                                   id="scroller"/>
             </h:form>
 
         </ui:define>
