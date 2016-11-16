@@ -165,6 +165,10 @@ public class VisitController implements Serializable{
         return vetDao.getAll();
     }
     
+    public int getVisitTotal(){
+        return visitList.size();
+    }
+    
     public String searchVisits(){
         this.visitList = visitDao.getAll();
         this.vet = vetDao.findById(this.vetId);
@@ -198,6 +202,9 @@ public class VisitController implements Serializable{
                 else{
                     i.remove();
                 }
+            }
+            else{
+                i.remove();
             }
         }     
         return "visits.jsf";
